@@ -32,7 +32,7 @@
 @interface UINavigationController (FDFullscreenPopGesture)
 
 /// The gesture recognizer that actually handles interactive pop.
-@property (nonatomic, strong, readonly) UIPanGestureRecognizer *fd_popGestureRecognizer;
+@property (nonatomic, strong, readonly) UIPanGestureRecognizer *fd_fullscreenPopGestureRecognizer;
 
 @end
 

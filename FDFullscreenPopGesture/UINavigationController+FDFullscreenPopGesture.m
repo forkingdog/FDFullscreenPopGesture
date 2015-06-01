@@ -33,21 +33,23 @@
 
 - (BOOL)gestureRecognizerShouldBegin:(UIPanGestureRecognizer *)gestureRecognizer
 {
+    // Ignore when no view controller is pushed into the navigation stack.
     if (self.navigationController.viewControllers.count <= 1) {
         return NO;
     }
     
-    // Check whether this view controller wants to pop by pan gesture.
+    // Disable when the active view controller doesn't allow interactive pop.
     UIViewController *topViewController = self.navigationController.viewControllers.lastObject;
     if (topViewController.fd_interactivePopDisabled) {
         return NO;
     }
-    
+
+    // Ignore pan gesture when the navigation controller is currently in transition.
     if ([[self.navigationController valueForKey:@"_isTransitioning"] boolValue]) {
         return NO;
     }
     
-    // Should not start for vertical translation.
+    // Prevent calling the handler when the gesture begins in an opposite direction.
     CGPoint translation = [gestureRecognizer translationInView:gestureRecognizer.view];
     if (translation.x <= 0) {
         return NO;
@@ -70,32 +72,33 @@
 
 - (void)fd_pushViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
-    // Setup fullscreen pop gesture recognizer only at first time.
-    if (!self.fd_hasFullscreenGestureRecognizerInjected) {
+    if (![self.interactivePopGestureRecognizer.view.gestureRecognizers containsObject:self.fd_popGestureRecognizer]) {
         
-        // Create a private pan gesture recognizer to replace system's "interactivePopGestureRecognizer",
-        // and still use its private target and gesture action handler.
-        self.fd_popGestureRecognizer.delegate = [self fd_popGestureRecognizerDelegate];
+        // Add our own gesture recognizer to where the onboard screen edge pan gesture recognizer is attached to.
+        [self.interactivePopGestureRecognizer.view addGestureRecognizer:self.fd_popGestureRecognizer];
+
+        // Forward the gesture events to the private handler of the onboard gesture recognizer.
         NSArray *internalTargets = [self.interactivePopGestureRecognizer valueForKey:@"targets"];
         id internalTarget = [internalTargets.firstObject valueForKey:@"target"];
         SEL internalAction = NSSelectorFromString(@"handleNavigationTransition:");
         [self.fd_popGestureRecognizer addTarget:internalTarget action:internalAction];
-        [self.interactivePopGestureRecognizer.view addGestureRecognizer:self.fd_popGestureRecognizer];
-        
+
+        // Disable the onboard gesture recognizer.
         self.interactivePopGestureRecognizer.enabled = NO;
-        self.fd_hasFullscreenGestureRecognizerInjected = YES;
     }
 
-    // Primary call
+    // Forward to primary implementation.
     [self fd_pushViewController:viewController animated:animated];
 }
 
 - (_FDScreenPopGestureRecognizerDelegate *)fd_popGestureRecognizerDelegate
 {
     _FDScreenPopGestureRecognizerDelegate *delegate = objc_getAssociatedObject(self, _cmd);
+
     if (!delegate) {
         delegate = [[_FDScreenPopGestureRecognizerDelegate alloc] init];
         delegate.navigationController = self;
+
         objc_setAssociatedObject(self, _cmd, delegate, OBJC_ASSOCIATION_RETAIN);
     }
     return delegate;
@@ -104,22 +107,15 @@
 - (UIPanGestureRecognizer *)fd_popGestureRecognizer
 {
     UIPanGestureRecognizer *panGestureRecognizer = objc_getAssociatedObject(self, _cmd);
+
     if (!panGestureRecognizer) {
         panGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
         panGestureRecognizer.maximumNumberOfTouches = 1;
+        panGestureRecognizer.delegate = self.fd_popGestureRecognizerDelegate;
+
         objc_setAssociatedObject(self, _cmd, panGestureRecognizer, OBJC_ASSOCIATION_RETAIN);
     }
     return panGestureRecognizer;
-}
-
-- (BOOL)fd_hasFullscreenGestureRecognizerInjected
-{
-    return [objc_getAssociatedObject(self, _cmd) boolValue];
-}
-
-- (void)setFd_hasFullscreenGestureRecognizerInjected:(BOOL)injected
-{
-    objc_setAssociatedObject(self, @selector(fd_hasFullscreenGestureRecognizerInjected), @(injected), OBJC_ASSOCIATION_RETAIN);
 }
 
 @end

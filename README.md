@@ -1,5 +1,5 @@
 # FDFullscreenPopGesture
-A UINavigationController's category to enable fullscreen pop gesture with iOS7+ system style.
+A UINavigationController's category to enable fullscreen pop gesture in an iOS7+ system style with AOP.
 
 # Overview
 
@@ -11,20 +11,20 @@ A UINavigationController's category to enable fullscreen pop gesture with iOS7+ 
 
 **AOP**, just add 2 files and **no need** for any setups, all navigation controllers will be able to use fullscreen pop gesture automatically.  
 
-To disable this pop gesture for navigation controller:  
+To disable this pop gesture of a navigation controller:  
 
 ``` objc
 navigationController.fd_fullscreenPopGestureRecognizer.enabled = NO;
 ```
 
-To disable this pop gesture for a single view controller:  
+To disable this pop gesture of a view controller:  
 
 ``` objc
 viewController.fd_interactivePopDisabled = YES;
 ```
 
 
-# Install  
+# Installation
 
 Use cocoapods  
 

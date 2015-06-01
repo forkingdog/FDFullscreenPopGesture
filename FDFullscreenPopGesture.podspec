@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
   s.version      = "1.0"
   s.summary      = "A UINavigationController's category to enable fullscreen pop gesture in iOS7+ system style with an AOP useage."
   s.description  = "AOP mode, just pod in 2 files and no need for any setups."
-  s.homepage     = "https://github.com/forkingdog/UITableView-FDTemplateLayoutCell"
+  s.homepage     = "https://github.com/forkingdog/FDFullscreenPopGesture"
 
   # ―――  Spec License  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   s.license = { :type => "MIT", :file => "LICENSE" }

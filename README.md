@@ -23,6 +23,7 @@ To disable this pop gesture of a view controller:
 viewController.fd_interactivePopDisabled = YES;
 ```
 
+Require at least iOS **7.0**.
 
 # Installation
 

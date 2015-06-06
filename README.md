@@ -25,6 +25,27 @@ viewController.fd_interactivePopDisabled = YES;
 
 Require at least iOS **7.0**.
 
+# View Controller Based Navigation Bar Appearance
+
+It handles navigation bar transition properly when using fullscreen gesture to push or pop a view controller:  
+
+- with bar -> without bar
+- without bar -> with bar
+- without bar -> without bar
+
+![snapshot with bar states](https://raw.githubusercontent.com/forkingdog/FDFullscreenPopGesture/master/Snapshots/snapshot1.gif)
+
+This opmiziation is enabled by default, from now on you don't need to call **UINavigationController**'s `-setNavigationBarHidden:animated:` method, instead, use view controller's specific API to hide its bar:  
+
+```
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.fd_prefersNavigationBarHidden = NO;
+}
+```
+
+And this property is **YES** by default.
+
 # Installation
 
 Use cocoapods  

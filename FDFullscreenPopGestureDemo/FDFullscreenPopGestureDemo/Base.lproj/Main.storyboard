@@ -22,7 +22,7 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Z6n-oR-iV2" id="Tco-xM-mHZ">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Push" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zYM-EQ-Hz3">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Push a view controller with bar" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zYM-EQ-Hz3">
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -32,6 +32,23 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <segue destination="2Pl-9I-t69" kind="push" id="amI-c6-vgq"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="xd7-rd-MzF" style="IBUITableViewCellStyleDefault" id="XKC-qi-pHD">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="XKC-qi-pHD" id="aZC-f1-pSy">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Push a view controller without bar" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="xd7-rd-MzF">
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="Vt4-da-upi" kind="push" id="ZbN-tv-O4r"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -47,6 +64,52 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Sdz-jg-ffV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="488" y="-18"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="BJu-Yl-eEl">
+            <objects>
+                <viewController id="Vt4-da-upi" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="NeC-O8-9Iu"/>
+                        <viewControllerLayoutGuide type="bottom" id="PtH-Yf-9Du"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Rj7-Fg-Utv">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This view controller's  navigation bar is hidden" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oMP-QY-pLJ">
+                                <rect key="frame" x="50" y="260" width="221" height="48"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7YL-k9-gxt">
+                                <rect key="frame" x="141" y="210" width="39" height="30"/>
+                                <state key="normal" title="Push ">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="2Pl-9I-t69" kind="push" id="rTt-jg-esi"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="oMP-QY-pLJ" firstAttribute="top" secondItem="7YL-k9-gxt" secondAttribute="bottom" constant="20" id="bYD-sE-Dy4"/>
+                            <constraint firstAttribute="centerX" secondItem="oMP-QY-pLJ" secondAttribute="centerX" id="czh-Ng-wyS"/>
+                            <constraint firstAttribute="centerY" secondItem="oMP-QY-pLJ" secondAttribute="centerY" id="lU1-6P-QwP"/>
+                            <constraint firstItem="oMP-QY-pLJ" firstAttribute="centerX" secondItem="7YL-k9-gxt" secondAttribute="centerX" id="qSu-Ac-kXC"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="6dx-PQ-flm"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="fd_prefersNavigationBarHidden" value="YES"/>
+                    </userDefinedRuntimeAttributes>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4yO-BP-M2q" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="922" y="416"/>
         </scene>
         <!--forkingdog-->
         <scene sceneID="cOT-kB-lLH">
@@ -86,7 +149,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tm0-0L-ypJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="879" y="-18"/>
+            <point key="canvasLocation" x="922" y="-239"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="pyQ-ib-aCd">
@@ -115,4 +178,7 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="rTt-jg-esi"/>
+    </inferredMetricsTieBreakers>
 </document>

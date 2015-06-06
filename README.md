@@ -53,7 +53,10 @@ Use cocoapods
 ``` ruby
 pod 'FDFullscreenPopGesture', '1.1'
 ```
+# Release Notes
+
+**1.1** - View controller based navigation bar appearance and transition.  
+**1.0** - Fullscreen pop gesture.  
 
 # License  
-
 MIT

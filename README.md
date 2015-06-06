@@ -1,5 +1,5 @@
 # FDFullscreenPopGesture
-A UINavigationController's category to enable fullscreen pop gesture in an iOS7+ system style with AOP.
+An UINavigationController's category to enable fullscreen pop gesture in an iOS7+ system style with AOP.
 
 # Overview
 
@@ -51,7 +51,7 @@ And this property is **YES** by default.
 Use cocoapods  
 
 ``` ruby
-pod 'FDFullscreenPopGesture', '1.0'
+pod 'FDFullscreenPopGesture', '1.1'
 ```
 
 # License  

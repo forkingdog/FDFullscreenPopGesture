@@ -37,7 +37,7 @@ It handles navigation bar transition properly when using fullscreen gesture to p
 
 This opmiziation is enabled by default, from now on you don't need to call **UINavigationController**'s `-setNavigationBarHidden:animated:` method, instead, use view controller's specific API to hide its bar:  
 
-```
+``` objc
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.fd_prefersNavigationBarHidden = NO;

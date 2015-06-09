@@ -38,9 +38,16 @@
         return NO;
     }
     
-    // Disable when the active view controller doesn't allow interactive pop.
+    // Ignore when the active view controller doesn't allow interactive pop.
     UIViewController *topViewController = self.navigationController.viewControllers.lastObject;
     if (topViewController.fd_interactivePopDisabled) {
+        return NO;
+    }
+    
+    // Ignore when the beginning location is beyond max allowed initial distance to left edge.
+    CGPoint beginningLocation = [gestureRecognizer locationInView:gestureRecognizer.view];
+    CGFloat maxAllowedInitialDistance = topViewController.fd_interactivePopMaxAllowedInitialDistanceToLeftEdge;
+    if (maxAllowedInitialDistance > 0 && beginningLocation.x > maxAllowedInitialDistance) {
         return NO;
     }
 
@@ -53,14 +60,6 @@
     CGPoint translation = [gestureRecognizer translationInView:gestureRecognizer.view];
     if (translation.x <= 0) {
         return NO;
-    }
-    
-    // Prevent calling the handler when the gesture start point bigger than the threshold.
-    if (topViewController.fd_interactivePopMaxEnablePointX > 0) {
-        CGPoint location = [gestureRecognizer locationInView:gestureRecognizer.view];
-        if (location.x > topViewController.fd_interactivePopMaxEnablePointX) {
-            return NO;
-        }
     }
     
     return YES;
@@ -233,7 +232,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 }
 
 
-- (CGFloat)fd_interactivePopMaxEnablePointX
+- (CGFloat)fd_interactivePopMaxAllowedInitialDistanceToLeftEdge
 {
 #if CGFLOAT_IS_DOUBLE
     return [objc_getAssociatedObject(self, _cmd) doubleValue];
@@ -242,9 +241,10 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 #endif
 }
 
-- (void)setFd_interactivePopMaxEnablePointX:(CGFloat)pointX
+- (void)setFd_interactivePopMaxAllowedInitialDistanceToLeftEdge:(CGFloat)distance
 {
-    objc_setAssociatedObject(self, @selector(fd_interactivePopMaxEnablePointX), @(pointX), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    SEL key = @selector(fd_interactivePopMaxAllowedInitialDistanceToLeftEdge);
+    objc_setAssociatedObject(self, key, @(MAX(0, distance)), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end

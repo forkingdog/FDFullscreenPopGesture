@@ -55,14 +55,6 @@
         return NO;
     }
     
-    // Prevent calling the handler when the gesture start point bigger than the threshold.
-    if (topViewController.fd_interactivePopMaxEnablePointX > 0) {
-        CGPoint location = [gestureRecognizer locationInView:gestureRecognizer.view];
-        if (location.x > topViewController.fd_interactivePopMaxEnablePointX) {
-            return NO;
-        }
-    }
-    
     return YES;
 }
 
@@ -230,21 +222,6 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 - (void)setFd_prefersNavigationBarHidden:(BOOL)hidden
 {
     objc_setAssociatedObject(self, @selector(fd_prefersNavigationBarHidden), @(hidden), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-
-- (CGFloat)fd_interactivePopMaxEnablePointX
-{
-#if CGFLOAT_IS_DOUBLE
-    return [objc_getAssociatedObject(self, _cmd) doubleValue];
-#else
-    return [objc_getAssociatedObject(self, _cmd) floatValue];
-#endif
-}
-
-- (void)setFd_interactivePopMaxEnablePointX:(CGFloat)pointX
-{
-    objc_setAssociatedObject(self, @selector(fd_interactivePopMaxEnablePointX), @(pointX), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end

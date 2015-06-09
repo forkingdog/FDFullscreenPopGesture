@@ -55,8 +55,4 @@
 /// Default to NO, bars are more likely to show.
 @property (nonatomic, assign) BOOL fd_prefersNavigationBarHidden;
 
-/// Threshold to decide whether the interactive pop is enable;
-/// Default to 0, work then pointX bigger than 0.
-@property (nonatomic, assign) CGFloat fd_interactivePopMaxEnablePointX;
-
 @end

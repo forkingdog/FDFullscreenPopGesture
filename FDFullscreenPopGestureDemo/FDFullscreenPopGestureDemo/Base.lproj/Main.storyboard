@@ -77,14 +77,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This view controller's  navigation bar is hidden" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oMP-QY-pLJ">
-                                <rect key="frame" x="50" y="260" width="221" height="48"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7YL-k9-gxt">
-                                <rect key="frame" x="141" y="210" width="39" height="30"/>
+                                <rect key="frame" x="141" y="186" width="39" height="30"/>
                                 <state key="normal" title="Push ">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -92,9 +86,17 @@
                                     <segue destination="2Pl-9I-t69" kind="push" id="rTt-jg-esi"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This view controller's navigation bar is hidden and max allowed pop gesture initial distance is 200" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oMP-QY-pLJ">
+                                <rect key="frame" x="25" y="236" width="270" height="96"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="oMP-QY-pLJ" firstAttribute="leading" secondItem="Rj7-Fg-Utv" secondAttribute="leading" constant="25" id="4E6-vQ-AfN"/>
+                            <constraint firstAttribute="trailing" secondItem="oMP-QY-pLJ" secondAttribute="trailing" constant="25" id="8Os-Zq-V09"/>
                             <constraint firstItem="oMP-QY-pLJ" firstAttribute="top" secondItem="7YL-k9-gxt" secondAttribute="bottom" constant="20" id="bYD-sE-Dy4"/>
                             <constraint firstAttribute="centerX" secondItem="oMP-QY-pLJ" secondAttribute="centerX" id="czh-Ng-wyS"/>
                             <constraint firstAttribute="centerY" secondItem="oMP-QY-pLJ" secondAttribute="centerY" id="lU1-6P-QwP"/>
@@ -105,6 +107,9 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="boolean" keyPath="fd_prefersNavigationBarHidden" value="YES"/>
+                        <userDefinedRuntimeAttribute type="number" keyPath="fd_interactivePopMaxAllowedInitialDistanceToLeftEdge">
+                            <integer key="value" value="200"/>
+                        </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4yO-BP-M2q" userLabel="First Responder" sceneMemberID="firstResponder"/>

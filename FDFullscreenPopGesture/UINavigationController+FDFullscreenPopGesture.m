@@ -166,7 +166,9 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
     [self fd_setupViewControllerBasedNavigationBarAppearanceIfNeeded:viewController];
     
     // Forward to primary implementation.
-    [self fd_pushViewController:viewController animated:animated];
+    if (![self.viewControllers containsObject:viewController]) {
+        [self fd_pushViewController:viewController animated:animated];
+    }
 }
 
 - (void)fd_setupViewControllerBasedNavigationBarAppearanceIfNeeded:(UIViewController *)appearingViewController

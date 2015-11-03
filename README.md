@@ -44,7 +44,7 @@ This opmiziation is enabled by default, from now on you don't need to call **UIN
 }
 ```
 
-And this property is **YES** by default.
+And this property is **NO** by default.
 
 # Installation
 

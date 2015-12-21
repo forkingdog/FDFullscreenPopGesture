@@ -51,10 +51,11 @@ And this property is **NO** by default.
 Use cocoapods  
 
 ``` ruby
-pod 'FDFullscreenPopGesture', '1.1'
+pod 'FDFullscreenPopGesture_Bell'
 ```
 # Release Notes
 
+**2.0** - add swiping right to pop for iOS6.  
 **1.1** - View controller based navigation bar appearance and transition.  
 **1.0** - Fullscreen pop gesture.  
 

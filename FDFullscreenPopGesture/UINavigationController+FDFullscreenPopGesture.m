@@ -85,7 +85,8 @@
         }
         CGPoint locationInScrollView = [otherGestureRecognizer locationInView:scrollView];
         CGPoint locationInLayoutContainer = [gestureRecognizer.view convertPoint:locationInScrollView fromView:scrollView];
-        return locationInLayoutContainer.x < 100;
+        UIViewController *topViewController = self.navigationController.viewControllers.lastObject;
+        return locationInLayoutContainer.x < MIN(100, topViewController.fd_interactivePopMaxAllowedInitialDistanceToLeftEdge);
     }
     return NO;
 }

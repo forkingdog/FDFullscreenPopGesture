@@ -23,7 +23,7 @@ To disable this pop gesture of a view controller:
 viewController.fd_interactivePopDisabled = YES;
 ```
 
-To customer the distance to left edge when you begin the interactive pop gesture.you can set a digit in you UINavigationController like this(0 by default,which means it will ignore this limit):  
+To customer the distance to left edge when you begin the interactive pop gesture.you can set a digit in you UINavigationController like this(0 by default,which means it will ignore this limit):  
 
 ``` objc
 navigationController.fd_interactivePopMaxAllowedInitialDistanceToLeftEdge = 20;

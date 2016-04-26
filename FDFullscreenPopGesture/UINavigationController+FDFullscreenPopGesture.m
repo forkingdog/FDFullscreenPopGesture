@@ -21,7 +21,60 @@
 // SOFTWARE.
 
 #import "UINavigationController+FDFullscreenPopGesture.h"
+#import <UIKit/UIGestureRecognizerSubclass.h>
 #import <objc/runtime.h>
+
+@interface FDPanGestureRecognizer : UIPanGestureRecognizer
+
+@property (nonatomic, strong, readonly) UIEvent *event;
+
+- (CGPoint)beganLocationInView:(UIView *)view;
+
+@end
+
+@interface FDPanGestureRecognizer ()
+
+@property (strong, nonatomic) UIEvent *event;
+@property (assign, nonatomic) CGPoint beganLocation;
+@property (assign, nonatomic) NSTimeInterval beganTime;
+
+@end
+
+@implementation FDPanGestureRecognizer
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch *touch = [touches anyObject];
+    self.event = event;
+    self.beganTime = event.timestamp;
+    self.beganLocation = [touch locationInView:self.view];
+    [super touchesBegan:touches withEvent:event];
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (self.state == UIGestureRecognizerStatePossible && event.timestamp - self.beganTime > 0.3) {
+        self.state = UIGestureRecognizerStateFailed;
+        return;
+    }
+    [super touchesMoved:touches withEvent:event];
+}
+
+- (void)reset
+{
+    self.event = nil;
+    self.beganTime = 0;
+    self.beganLocation = CGPointZero;
+    [super reset];
+}
+
+- (CGPoint)beganLocationInView:(UIView *)view
+{
+    return [view convertPoint:self.beganLocation fromView:self.view];
+}
+
+@end
+
 
 @interface _FDFullscreenPopGestureRecognizerDelegate : NSObject <UIGestureRecognizerDelegate>
 
@@ -50,7 +103,7 @@
     if (maxAllowedInitialDistance > 0 && beginningLocation.x > maxAllowedInitialDistance) {
         return NO;
     }
-
+    
     // Ignore pan gesture when the navigation controller is currently in transition.
     if ([[self.navigationController valueForKey:@"_isTransitioning"] boolValue]) {
         return NO;
@@ -63,6 +116,62 @@
     }
     
     return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    
+    // Ignore when no view controller is pushed into the navigation stack.
+    if (self.navigationController.viewControllers.count <= 1) {
+        return NO;
+    }
+    
+    // Ignore when the active view controller doesn't allow interactive pop.
+    UIViewController *topViewController = self.navigationController.viewControllers.lastObject;
+    if (topViewController.fd_interactivePopDisabled) {
+        return NO;
+    }
+    
+    // Ignore when the beginning location is beyond max allowed initial distance to left edge.
+    CGPoint beginningLocation = [gestureRecognizer locationInView:gestureRecognizer.view];
+    CGFloat maxAllowedInitialDistance = topViewController.fd_interactivePopMaxAllowedInitialDistanceToLeftEdge;
+    if (maxAllowedInitialDistance > 0 && beginningLocation.x > maxAllowedInitialDistance) {
+        return NO;
+    }
+    
+    // Ignore pan gesture when the navigation controller is currently in transition.
+    if ([[self.navigationController valueForKey:@"_isTransitioning"] boolValue]) {
+        return NO;
+    }
+    
+    FDPanGestureRecognizer* fd_gestureRecognizer = (FDPanGestureRecognizer *)gestureRecognizer;
+    // Prevent calling the handler when the gesture begins in an opposite direction.
+    CGPoint translation = [fd_gestureRecognizer translationInView:fd_gestureRecognizer.view];
+    if (translation.x <= 0) {
+        return NO;
+    }
+    
+    CGPoint touchPoint = [fd_gestureRecognizer beganLocationInView:fd_gestureRecognizer.view];
+    // If within thirty hit area on the left, forced back
+    if (touchPoint.x < 30) {
+        NSSet *touchs = [fd_gestureRecognizer.event touchesForGestureRecognizer:otherGestureRecognizer];
+        [otherGestureRecognizer touchesCancelled:touchs withEvent:fd_gestureRecognizer.event];
+        return YES;
+    }
+    
+    // If there are multiple gestures
+    // And other gestures of view is a scroll view
+    // If you scroll view scroll to less than zero, the scroll view gesture cancellation effect
+    if ([[otherGestureRecognizer view] isKindOfClass:[UIScrollView class]]) {
+        UIScrollView *scrollView = (UIScrollView *)[otherGestureRecognizer view];
+        if (scrollView.contentOffset.x <= 0) {
+            NSSet *touchs = [fd_gestureRecognizer.event touchesForGestureRecognizer:otherGestureRecognizer];
+            [otherGestureRecognizer touchesCancelled:touchs withEvent:fd_gestureRecognizer.event];
+            return YES;
+        }
+    }
+    
+    return NO;
 }
 
 @end
@@ -150,14 +259,14 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
         
         // Add our own gesture recognizer to where the onboard screen edge pan gesture recognizer is attached to.
         [self.interactivePopGestureRecognizer.view addGestureRecognizer:self.fd_fullscreenPopGestureRecognizer];
-
+        
         // Forward the gesture events to the private handler of the onboard gesture recognizer.
         NSArray *internalTargets = [self.interactivePopGestureRecognizer valueForKey:@"targets"];
         id internalTarget = [internalTargets.firstObject valueForKey:@"target"];
         SEL internalAction = NSSelectorFromString(@"handleNavigationTransition:");
         self.fd_fullscreenPopGestureRecognizer.delegate = self.fd_popGestureRecognizerDelegate;
         [self.fd_fullscreenPopGestureRecognizer addTarget:internalTarget action:internalAction];
-
+        
         // Disable the onboard gesture recognizer.
         self.interactivePopGestureRecognizer.enabled = NO;
     }
@@ -198,7 +307,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 - (_FDFullscreenPopGestureRecognizerDelegate *)fd_popGestureRecognizerDelegate
 {
     _FDFullscreenPopGestureRecognizerDelegate *delegate = objc_getAssociatedObject(self, _cmd);
-
+    
     if (!delegate) {
         delegate = [[_FDFullscreenPopGestureRecognizerDelegate alloc] init];
         delegate.navigationController = self;
@@ -211,9 +320,9 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 - (UIPanGestureRecognizer *)fd_fullscreenPopGestureRecognizer
 {
     UIPanGestureRecognizer *panGestureRecognizer = objc_getAssociatedObject(self, _cmd);
-
+    
     if (!panGestureRecognizer) {
-        panGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
+        panGestureRecognizer = [[FDPanGestureRecognizer alloc] init];
         panGestureRecognizer.maximumNumberOfTouches = 1;
         
         objc_setAssociatedObject(self, _cmd, panGestureRecognizer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);

@@ -10,6 +10,7 @@
 		166C9AC31CFFEDC70091C82E /* FDFullscreenPopGesture.h in Headers */ = {isa = PBXBuildFile; fileRef = 166C9AC21CFFEDC70091C82E /* FDFullscreenPopGesture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		166C9AC71CFFEDC70091C82E /* FDFullscreenPopGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166C9AC01CFFEDC70091C82E /* FDFullscreenPopGesture.framework */; };
 		166C9AC81CFFEDC70091C82E /* FDFullscreenPopGesture.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 166C9AC01CFFEDC70091C82E /* FDFullscreenPopGesture.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1673A1F31D016E1300519B15 /* UINavigationController+FDFullscreenPopGesture.m in Sources */ = {isa = PBXBuildFile; fileRef = 16AE775A1CFF37220071C3F9 /* UINavigationController+FDFullscreenPopGesture.m */; };
 		4894F4201B183DE3009F44D9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4894F41F1B183DE3009F44D9 /* main.m */; };
 		4894F4231B183DE3009F44D9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4894F4221B183DE3009F44D9 /* AppDelegate.m */; };
 		4894F4291B183DE3009F44D9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4894F4271B183DE3009F44D9 /* Main.storyboard */; };
@@ -263,6 +264,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1673A1F31D016E1300519B15 /* UINavigationController+FDFullscreenPopGesture.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

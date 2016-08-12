@@ -159,7 +159,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
         [self.fd_fullscreenPopGestureRecognizer addTarget:internalTarget action:internalAction];
 
         // Disable the onboard gesture recognizer.
-        self.interactivePopGestureRecognizer.enabled = NO;
+        //self.interactivePopGestureRecognizer.enabled = NO;
     }
     
     // Handle perferred navigation bar appearance.
@@ -248,6 +248,10 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 
 - (void)setFd_interactivePopDisabled:(BOOL)disabled
 {
+    if (self.navigationController) {
+        self.navigationController.interactivePopGestureRecognizer.enabled = !disabled;
+    }
+    
     objc_setAssociatedObject(self, @selector(fd_interactivePopDisabled), @(disabled), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 

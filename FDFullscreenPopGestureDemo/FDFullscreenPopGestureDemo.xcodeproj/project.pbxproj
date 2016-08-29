@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3855B3261CCF6EED0072D889 /* FDTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3855B3251CCF6EED0072D889 /* FDTableViewController.m */; };
 		4894F4201B183DE3009F44D9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4894F41F1B183DE3009F44D9 /* main.m */; };
 		4894F4231B183DE3009F44D9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4894F4221B183DE3009F44D9 /* AppDelegate.m */; };
 		4894F4291B183DE3009F44D9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4894F4271B183DE3009F44D9 /* Main.storyboard */; };
@@ -16,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3855B3241CCF6EED0072D889 /* FDTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FDTableViewController.h; sourceTree = "<group>"; };
+		3855B3251CCF6EED0072D889 /* FDTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FDTableViewController.m; sourceTree = "<group>"; };
 		4894F41A1B183DE3009F44D9 /* FDFullscreenPopGestureDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FDFullscreenPopGestureDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4894F41E1B183DE3009F44D9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4894F41F1B183DE3009F44D9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -61,6 +64,8 @@
 				4894F4431B183DEF009F44D9 /* FDFullscreenPopGesture */,
 				4894F4211B183DE3009F44D9 /* AppDelegate.h */,
 				4894F4221B183DE3009F44D9 /* AppDelegate.m */,
+				3855B3241CCF6EED0072D889 /* FDTableViewController.h */,
+				3855B3251CCF6EED0072D889 /* FDTableViewController.m */,
 				4894F4271B183DE3009F44D9 /* Main.storyboard */,
 				4894F42A1B183DE3009F44D9 /* Images.xcassets */,
 				4894F42C1B183DE3009F44D9 /* LaunchScreen.xib */,
@@ -161,6 +166,7 @@
 				4894F4231B183DE3009F44D9 /* AppDelegate.m in Sources */,
 				4894F4461B183E99009F44D9 /* UINavigationController+FDFullscreenPopGesture.m in Sources */,
 				4894F4201B183DE3009F44D9 /* main.m in Sources */,
+				3855B3261CCF6EED0072D889 /* FDTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,6 +311,7 @@
 				4894F43F1B183DE3009F44D9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

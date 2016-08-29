@@ -1,20 +1,22 @@
 
+
 Pod::Spec.new do |s|
-
-
-  s.name         = "FDFullscreenPopGesture_ysghome"
+  s.name         = "FDFullscreenPopGesture"
   s.version      = "1.1.1"
-  s.summary      = "FDFullscreenPopGesture库添加滚动视图，右滑返回功能。"
+  s.summary      = "An UINavigationController's category to enable fullscreen pop gesture in iOS7+ system style with an AOP useage."
+  s.description  = "An UINavigationController's category to enable fullscreen pop gesture in iOS7+ system style with an AOP useage. Just pod in 2 files and no need for any setups."
+  s.homepage     = "https://github.com/forkingdog/FDFullscreenPopGesture"
 
-  s.description  = <<-DESC
-                   FDFullscreenPopGesture库添加滚动视图，右滑返回功能
-
-  s.homepage     = "https://github.com/ysghome/FDFullscreenPopGesture"
-  s.license      = "MIT"
-  s.author             = { "ysghome" => "ysghome@163.com" }
-  s.platform     = :ios, "7.0"
-  s.source       = { :git => "https://github.com/ysghome/FDFullscreenPopGesture.git", :tag => "1.1.1" }
-  s.source_files  = "FDFullscreenPopGesture", "FDFullscreenPopGesture/**/*.{h,m}"
-  s.frameworks = "Foundation"
-
+  # ―――  Spec License  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
+  s.license = { :type => "MIT", :file => "LICENSE" }
+  # ――― Author Metadata  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
+  s.author = { "forkingdog group" => "https://github.com/forkingdog" }
+  # ――― Platform Specifics ――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
+  s.platform = :ios, "7.0"
+  # ――― Source Location ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
+  s.source = { :git => "https://github.com/forkingdog/FDFullscreenPopGesture.git", :tag => "1.1.1" }
+  # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
+  s.source_files  = "FDFullscreenPopGesture/*.{h,m}"
+  # ――― Project Settings ――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
+  s.requires_arc = true
 end

@@ -146,24 +146,28 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 
 - (void)fd_pushViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
-    if (![self.interactivePopGestureRecognizer.view.gestureRecognizers containsObject:self.fd_fullscreenPopGestureRecognizer]) {
+    if ( [[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 ) {
+        if (![self.interactivePopGestureRecognizer.view.gestureRecognizers containsObject:self.fd_fullscreenPopGestureRecognizer]) {
+            
+            // Add our own gesture recognizer to where the onboard screen edge pan gesture recognizer is attached to.
+            [self.interactivePopGestureRecognizer.view addGestureRecognizer:self.fd_fullscreenPopGestureRecognizer];
+            
+            // Forward the gesture events to the private handler of the onboard gesture recognizer.
+            NSArray *internalTargets = [self.interactivePopGestureRecognizer valueForKey:@"targets"];
+            id internalTarget = [internalTargets.firstObject valueForKey:@"target"];
+            SEL internalAction = NSSelectorFromString(@"handleNavigationTransition:");
+            self.fd_fullscreenPopGestureRecognizer.delegate = self.fd_popGestureRecognizerDelegate;
+            [self.fd_fullscreenPopGestureRecognizer addTarget:internalTarget action:internalAction];
+            
+            // Disable the onboard gesture recognizer.
+            self.interactivePopGestureRecognizer.enabled = NO;
+        }
         
-        // Add our own gesture recognizer to where the onboard screen edge pan gesture recognizer is attached to.
-        [self.interactivePopGestureRecognizer.view addGestureRecognizer:self.fd_fullscreenPopGestureRecognizer];
-
-        // Forward the gesture events to the private handler of the onboard gesture recognizer.
-        NSArray *internalTargets = [self.interactivePopGestureRecognizer valueForKey:@"targets"];
-        id internalTarget = [internalTargets.firstObject valueForKey:@"target"];
-        SEL internalAction = NSSelectorFromString(@"handleNavigationTransition:");
-        self.fd_fullscreenPopGestureRecognizer.delegate = self.fd_popGestureRecognizerDelegate;
-        [self.fd_fullscreenPopGestureRecognizer addTarget:internalTarget action:internalAction];
-
-        // Disable the onboard gesture recognizer.
-        self.interactivePopGestureRecognizer.enabled = NO;
+        // Handle perferred navigation bar appearance.
+        [self fd_setupViewControllerBasedNavigationBarAppearanceIfNeeded:viewController];
+    } else {
+        [viewController.view addGestureRecognizer:viewController.fd_swipeRightGesture];
     }
-    
-    // Handle perferred navigation bar appearance.
-    [self fd_setupViewControllerBasedNavigationBarAppearanceIfNeeded:viewController];
     
     // Forward to primary implementation.
     if (![self.viewControllers containsObject:viewController]) {
@@ -237,6 +241,16 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
     objc_setAssociatedObject(self, key, @(enabled), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
+- (BOOL)fd_enableSwipeRight
+{
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
+- (void)setFd_enableSwipeRight:(BOOL)enable
+{
+    objc_setAssociatedObject(self, @selector(fd_enableSwipeRight), @(enable), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
 @end
 
 @implementation UIViewController (FDFullscreenPopGesture)
@@ -261,7 +275,6 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
     objc_setAssociatedObject(self, @selector(fd_prefersNavigationBarHidden), @(hidden), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-
 - (CGFloat)fd_interactivePopMaxAllowedInitialDistanceToLeftEdge
 {
 #if CGFLOAT_IS_DOUBLE
@@ -275,6 +288,41 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 {
     SEL key = @selector(fd_interactivePopMaxAllowedInitialDistanceToLeftEdge);
     objc_setAssociatedObject(self, key, @(MAX(0, distance)), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (UISwipeGestureRecognizer *)fd_swipeRightGesture
+{
+    UISwipeGestureRecognizer *swipeRightGesture = objc_getAssociatedObject(self, _cmd);
+    if (!swipeRightGesture) {
+        swipeRightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(fd_swipeRight:)];
+        [swipeRightGesture setDirection:UISwipeGestureRecognizerDirectionRight];
+        
+        objc_setAssociatedObject(self, _cmd, swipeRightGesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return swipeRightGesture;
+}
+
+- (BOOL)fd_enableSwipeRight
+{
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
+- (void)setFd_enableSwipeRight:(BOOL)enable
+{
+    objc_setAssociatedObject(self, @selector(fd_enableSwipeRight), @(enable), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+#pragma mark - action
+
+- (void)fd_swipeRight:(UISwipeGestureRecognizer*)gesture
+{
+    if (!self.navigationController.fd_enableSwipeRight) {
+        return;
+    }
+    if (!self.fd_enableSwipeRight) {
+        return;
+    }
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end

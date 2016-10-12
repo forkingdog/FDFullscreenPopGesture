@@ -39,6 +39,11 @@
 /// Default to YES, disable it if you don't want so.
 @property (nonatomic, assign) BOOL fd_viewControllerBasedNavigationBarAppearanceEnabled;
 
+/**
+ *  Whether Swiping right to pop is enabled
+ */
+@property (nonatomic, assign) BOOL fd_enableSwipeRight;
+
 @end
 
 /// Allows any view controller to disable interactive pop gesture, which might
@@ -58,5 +63,15 @@
 /// Max allowed initial distance to left edge when you begin the interactive pop
 /// gesture. 0 by default, which means it will ignore this limit.
 @property (nonatomic, assign) CGFloat fd_interactivePopMaxAllowedInitialDistanceToLeftEdge;
+
+/**
+ *  the gesture to swipe to right,used for iOS6 especially
+ */
+@property(nonatomic,strong,readonly)UISwipeGestureRecognizer *fd_swipeRightGesture;
+
+/**
+ *  Whether Swiping right to pop is enabled
+ */
+@property (nonatomic, assign) BOOL fd_enableSwipeRight;
 
 @end

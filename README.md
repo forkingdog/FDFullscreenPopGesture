@@ -48,7 +48,7 @@ And this property is **NO** by default.
 
 # Installation
 
-Use cocoapods  
+Use CocoaPods  
 
 ``` ruby
 pod 'FDFullscreenPopGesture', '1.1'

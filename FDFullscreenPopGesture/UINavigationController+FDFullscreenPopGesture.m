@@ -50,7 +50,7 @@
     if (maxAllowedInitialDistance > 0 && beginningLocation.x > maxAllowedInitialDistance) {
         return NO;
     }
-
+    
     // Ignore pan gesture when the navigation controller is currently in transition.
     if ([[self.navigationController valueForKey:@"_isTransitioning"] boolValue]) {
         return NO;
@@ -142,25 +142,30 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
             method_exchangeImplementations(originalMethod, swizzledMethod);
         }
     });
+    
+    // Inject "-setViewControllers:animated:"
+    static dispatch_once_t onceToken2;
+    dispatch_once(&onceToken2, ^{
+        Class class = [self class];
+        
+        SEL originalSelector = @selector(setViewControllers:animated:);
+        SEL swizzledSelector = @selector(fd_setViewControllers:animated:);
+        
+        Method originalMethod = class_getInstanceMethod(class, originalSelector);
+        Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
+        
+        BOOL success = class_addMethod(class, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));
+        if (success) {
+            class_replaceMethod(class, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+        } else {
+            method_exchangeImplementations(originalMethod, swizzledMethod);
+        }
+    });
 }
 
 - (void)fd_pushViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
-    if (![self.interactivePopGestureRecognizer.view.gestureRecognizers containsObject:self.fd_fullscreenPopGestureRecognizer]) {
-        
-        // Add our own gesture recognizer to where the onboard screen edge pan gesture recognizer is attached to.
-        [self.interactivePopGestureRecognizer.view addGestureRecognizer:self.fd_fullscreenPopGestureRecognizer];
-
-        // Forward the gesture events to the private handler of the onboard gesture recognizer.
-        NSArray *internalTargets = [self.interactivePopGestureRecognizer valueForKey:@"targets"];
-        id internalTarget = [internalTargets.firstObject valueForKey:@"target"];
-        SEL internalAction = NSSelectorFromString(@"handleNavigationTransition:");
-        self.fd_fullscreenPopGestureRecognizer.delegate = self.fd_popGestureRecognizerDelegate;
-        [self.fd_fullscreenPopGestureRecognizer addTarget:internalTarget action:internalAction];
-
-        // Disable the onboard gesture recognizer.
-        self.interactivePopGestureRecognizer.enabled = NO;
-    }
+    [self fd_addFullscreenPopGestureRecognizer];
     
     // Handle perferred navigation bar appearance.
     [self fd_setupViewControllerBasedNavigationBarAppearanceIfNeeded:viewController];
@@ -168,6 +173,37 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
     // Forward to primary implementation.
     if (![self.viewControllers containsObject:viewController]) {
         [self fd_pushViewController:viewController animated:animated];
+    }
+}
+
+- (void)fd_setViewControllers:(NSArray<UIViewController *> *)viewControllers animated:(BOOL)animated
+{
+    [self fd_addFullscreenPopGestureRecognizer];
+    
+    // Handle perferred navigation bar appearance.
+    for (UIViewController *viewController in viewControllers) {
+        [self fd_setupViewControllerBasedNavigationBarAppearanceIfNeeded:viewController];
+    }
+    
+    [self fd_setViewControllers:viewControllers animated:animated];
+}
+
+- (void)fd_addFullscreenPopGestureRecognizer
+{
+    if (![self.interactivePopGestureRecognizer.view.gestureRecognizers containsObject:self.fd_fullscreenPopGestureRecognizer]) {
+        
+        // Add our own gesture recognizer to where the onboard screen edge pan gesture recognizer is attached to.
+        [self.interactivePopGestureRecognizer.view addGestureRecognizer:self.fd_fullscreenPopGestureRecognizer];
+        
+        // Forward the gesture events to the private handler of the onboard gesture recognizer.
+        NSArray *internalTargets = [self.interactivePopGestureRecognizer valueForKey:@"targets"];
+        id internalTarget = [internalTargets.firstObject valueForKey:@"target"];
+        SEL internalAction = NSSelectorFromString(@"handleNavigationTransition:");
+        self.fd_fullscreenPopGestureRecognizer.delegate = self.fd_popGestureRecognizerDelegate;
+        [self.fd_fullscreenPopGestureRecognizer addTarget:internalTarget action:internalAction];
+        
+        // Disable the onboard gesture recognizer.
+        self.interactivePopGestureRecognizer.enabled = NO;
     }
 }
 
@@ -198,7 +234,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 - (_FDFullscreenPopGestureRecognizerDelegate *)fd_popGestureRecognizerDelegate
 {
     _FDFullscreenPopGestureRecognizerDelegate *delegate = objc_getAssociatedObject(self, _cmd);
-
+    
     if (!delegate) {
         delegate = [[_FDFullscreenPopGestureRecognizerDelegate alloc] init];
         delegate.navigationController = self;
@@ -211,7 +247,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 - (UIPanGestureRecognizer *)fd_fullscreenPopGestureRecognizer
 {
     UIPanGestureRecognizer *panGestureRecognizer = objc_getAssociatedObject(self, _cmd);
-
+    
     if (!panGestureRecognizer) {
         panGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
         panGestureRecognizer.maximumNumberOfTouches = 1;

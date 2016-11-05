@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		140C9FF71DAF688C008260D6 /* FDDemoScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 140C9FF61DAF688C008260D6 /* FDDemoScrollView.m */; };
 		4894F4201B183DE3009F44D9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4894F41F1B183DE3009F44D9 /* main.m */; };
 		4894F4231B183DE3009F44D9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4894F4221B183DE3009F44D9 /* AppDelegate.m */; };
 		4894F4291B183DE3009F44D9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4894F4271B183DE3009F44D9 /* Main.storyboard */; };
@@ -16,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		140C9FF51DAF688C008260D6 /* FDDemoScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FDDemoScrollView.h; sourceTree = "<group>"; };
+		140C9FF61DAF688C008260D6 /* FDDemoScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FDDemoScrollView.m; sourceTree = "<group>"; };
 		4894F41A1B183DE3009F44D9 /* FDFullscreenPopGestureDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FDFullscreenPopGestureDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4894F41E1B183DE3009F44D9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4894F41F1B183DE3009F44D9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -61,6 +64,8 @@
 				4894F4431B183DEF009F44D9 /* FDFullscreenPopGesture */,
 				4894F4211B183DE3009F44D9 /* AppDelegate.h */,
 				4894F4221B183DE3009F44D9 /* AppDelegate.m */,
+				140C9FF51DAF688C008260D6 /* FDDemoScrollView.h */,
+				140C9FF61DAF688C008260D6 /* FDDemoScrollView.m */,
 				4894F4271B183DE3009F44D9 /* Main.storyboard */,
 				4894F42A1B183DE3009F44D9 /* Images.xcassets */,
 				4894F42C1B183DE3009F44D9 /* LaunchScreen.xib */,
@@ -114,11 +119,12 @@
 		4894F4121B183DE3009F44D9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = forkingdog;
 				TargetAttributes = {
 					4894F4191B183DE3009F44D9 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = K5ZWWSV295;
 					};
 				};
 			};
@@ -160,6 +166,7 @@
 			files = (
 				4894F4231B183DE3009F44D9 /* AppDelegate.m in Sources */,
 				4894F4461B183E99009F44D9 /* UINavigationController+FDFullscreenPopGesture.m in Sources */,
+				140C9FF71DAF688C008260D6 /* FDDemoScrollView.m in Sources */,
 				4894F4201B183DE3009F44D9 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -199,14 +206,17 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -222,7 +232,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -242,8 +252,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -259,7 +271,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -270,8 +282,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = K5ZWWSV295;
 				INFOPLIST_FILE = FDFullscreenPopGestureDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.afantree.FDFullscreenPopGestureDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -280,8 +294,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = K5ZWWSV295;
 				INFOPLIST_FILE = FDFullscreenPopGestureDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.afantree.FDFullscreenPopGestureDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -305,6 +321,7 @@
 				4894F43F1B183DE3009F44D9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

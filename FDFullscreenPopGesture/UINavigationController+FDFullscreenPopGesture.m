@@ -141,8 +141,132 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
         } else {
             method_exchangeImplementations(originalMethod, swizzledMethod);
         }
+        
+        
+        
+        //exchange setViewControllers
+        Method originalSetMethod = class_getInstanceMethod(self, @selector(setViewControllers:));
+        Method swizzledSetMethod = class_getInstanceMethod(self, @selector(fd_setViewControllers:));
+        method_exchangeImplementations(originalSetMethod, swizzledSetMethod);
+
+        
+        
+        
+        
     });
 }
+
+
+/*
+  when a navigationController create at AppDelegate.m by [[UINavigationController alloc]initWithRootViewController:]
+ the FDFullscreenPopGesture working well. because initWithRootViewController invoke pushViewController:animated:
+ so the fd_willAppearInjectBlock was injected normally.
+ 
+ 
+
+ but if you do like this:
+ 
+ OneViewController *firstVC = [[OneViewController alloc]init];
+ TwoViewController *secondVC = [[TwoViewController alloc]init];
+ ThreeViewController *thridVC = [[ThreeViewController alloc]init];
+ MyNavigationVC *navc = [[MyNavigationVC alloc]init];
+ [navc setViewControllers:@[firstVC, secondVC, thridVC]];
+ 
+ 
+ the fd_willAppearInjectBlock will never injected until pushViewController:animated: was invoked;
+ 
+ so, I try to exchange setViewControllers: methond, and it work !
+ 
+ 
+ run the app, thirdVC now is stack top's VC in MyNavigationVC, if you pop the thridVC,and secondVC's fd_prefersNavigationBarHidden = YES; the second VC's navigationbar is hidden; 
+ 
+ 
+ so, it was never need secondVC push thirdVC at first!
+
+*/
+
+/*
+ 
+ and I have another question:
+ 
+ BOOL success = class_addMethod(class, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));
+ if (success) {
+ class_replaceMethod(class, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+ } else {
+ method_exchangeImplementations(originalMethod, swizzledMethod);
+ }
+ 
+ if you creat a subClass inherit superClass, class_addMethod() is necessary;
+ and if you just creat a category from UIViewController; and exchange method viewWillAppear: , I think class_addMethod() is needless;
+ 
+ I hope you tell me weather my opinion in this question is appropriate in your freedom!
+ 
+ I write in English just because I don't want break your code style(I just installing B), you can reply me in Chinese better!
+ 
+ 3Q!
+ */
+
+-(void)fd_setViewControllers:(NSArray <__kindof UIViewController *>*)viewControllers
+{
+    
+    if (![self.interactivePopGestureRecognizer.view.gestureRecognizers containsObject:self.fd_fullscreenPopGestureRecognizer])
+    {
+        [self.view addGestureRecognizer:self.fd_fullscreenPopGestureRecognizer];
+        
+    }
+    
+    NSArray *internalTargets = [self.interactivePopGestureRecognizer valueForKey:@"targets"];
+    id internalTarget = [internalTargets.firstObject valueForKey:@"target"];
+    SEL internalAction = NSSelectorFromString(@"handleNavigationTransition:");
+    self.fd_fullscreenPopGestureRecognizer.delegate = self.fd_popGestureRecognizerDelegate;
+    [self.fd_fullscreenPopGestureRecognizer addTarget:internalTarget action:internalAction];
+    
+    // Disable the onboard gesture recognizer.
+    self.interactivePopGestureRecognizer.enabled = NO;
+    
+    
+    //traverse childViewControllers
+    for (UIViewController *viewController in viewControllers)
+    {
+        if (!self.fd_viewControllerBasedNavigationBarAppearanceEnabled)
+        {
+            return;
+        }
+        
+        __weak typeof(self) weakSelf = self;
+        _FDViewControllerWillAppearInjectBlock block = ^(UIViewController *viewController, BOOL animated){
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (strongSelf)
+            {
+                [strongSelf setNavigationBarHidden:viewController.fd_prefersNavigationBarHidden animated:animated];
+            }
+        };
+        
+        viewController.fd_willAppearInjectBlock = block;
+    }
+    
+    // Forward to primary implementation.
+    [self fd_setViewControllers:viewControllers];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 - (void)fd_pushViewController:(UIViewController *)viewController animated:(BOOL)animated
 {

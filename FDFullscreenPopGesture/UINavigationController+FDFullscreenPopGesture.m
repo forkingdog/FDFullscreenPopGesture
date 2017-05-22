@@ -95,7 +95,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 {
     // Forward to primary implementation.
     [self fd_viewWillDisappear:animated];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(CGFLOAT_MIN * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         UIViewController *viewController = [self.navigationController.viewControllers lastObject];
         if (!viewController.fd_prefersNavigationBarHidden) {
             [self.navigationController setNavigationBarHidden:NO animated:NO];

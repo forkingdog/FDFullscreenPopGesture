@@ -44,11 +44,26 @@ This opmiziation is enabled by default, from now on you don't need to call **UIN
 }
 ```
 
-And this property is **YES** by default.
+And this property is **NO** by default.
+
+# View Controller With ScrollView
+
+If you want to use fullscreen pop gesture in ViewController with scrollView or subclass of scrollView , you should customize the scrollView or subclass of scrollView and overload the `gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:` method . like this:
+
+``` objc
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if (self.contentOffset.x <= 0) {
+        if ([otherGestureRecognizer.delegate isKindOfClass:NSClassFromString(@"_FDFullscreenPopGestureRecognizerDelegate")]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+```
 
 # Installation
 
-Use cocoapods  
+Use CocoaPods  
 
 ``` ruby
 pod 'FDFullscreenPopGesture', '1.1'

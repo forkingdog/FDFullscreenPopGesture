@@ -38,12 +38,19 @@
         return NO;
     }
     
-    // Disable when the active view controller doesn't allow interactive pop.
+    // Ignore when the active view controller doesn't allow interactive pop.
     UIViewController *topViewController = self.navigationController.viewControllers.lastObject;
     if (topViewController.fd_interactivePopDisabled) {
         return NO;
     }
     
+    // Ignore when the beginning location is beyond max allowed initial distance to left edge.
+    CGPoint beginningLocation = [gestureRecognizer locationInView:gestureRecognizer.view];
+    CGFloat maxAllowedInitialDistance = topViewController.fd_interactivePopMaxAllowedInitialDistanceToLeftEdge;
+    if (maxAllowedInitialDistance > 0 && beginningLocation.x > maxAllowedInitialDistance) {
+        return NO;
+    }
+
     // Ignore pan gesture when the navigation controller is currently in transition.
     if ([[self.navigationController valueForKey:@"_isTransitioning"] boolValue]) {
         return NO;
@@ -72,13 +79,16 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 
 + (void)load
 {
-    Method viewWillAppear_originalMethod = class_getInstanceMethod(self, @selector(viewWillAppear:));
-    Method viewWillAppear_swizzledMethod = class_getInstanceMethod(self, @selector(fd_viewWillAppear:));
-    method_exchangeImplementations(viewWillAppear_originalMethod, viewWillAppear_swizzledMethod);
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        Method viewWillAppear_originalMethod = class_getInstanceMethod(self, @selector(viewWillAppear:));
+        Method viewWillAppear_swizzledMethod = class_getInstanceMethod(self, @selector(fd_viewWillAppear:));
+        method_exchangeImplementations(viewWillAppear_originalMethod, viewWillAppear_swizzledMethod);
     
-    Method viewWillDisappear_originalMethod = class_getInstanceMethod(self, @selector(viewWillDisappear:));
-    Method viewWillDisappear_swizzledMethod = class_getInstanceMethod(self, @selector(fd_viewWillDisappear:));
-    method_exchangeImplementations(viewWillDisappear_originalMethod, viewWillDisappear_swizzledMethod);
+        Method viewWillDisappear_originalMethod = class_getInstanceMethod(self, @selector(viewWillDisappear:));
+        Method viewWillDisappear_swizzledMethod = class_getInstanceMethod(self, @selector(fd_viewWillDisappear:));
+        method_exchangeImplementations(viewWillDisappear_originalMethod, viewWillDisappear_swizzledMethod);
+    });
 }
 
 - (void)fd_viewWillAppear:(BOOL)animated
@@ -121,9 +131,23 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 + (void)load
 {
     // Inject "-pushViewController:animated:"
-    Method originalMethod = class_getInstanceMethod(self, @selector(pushViewController:animated:));
-    Method swizzledMethod = class_getInstanceMethod(self, @selector(fd_pushViewController:animated:));
-    method_exchangeImplementations(originalMethod, swizzledMethod);
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        Class class = [self class];
+        
+        SEL originalSelector = @selector(pushViewController:animated:);
+        SEL swizzledSelector = @selector(fd_pushViewController:animated:);
+        
+        Method originalMethod = class_getInstanceMethod(class, originalSelector);
+        Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
+        
+        BOOL success = class_addMethod(class, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));
+        if (success) {
+            class_replaceMethod(class, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+        } else {
+            method_exchangeImplementations(originalMethod, swizzledMethod);
+        }
+    });
 }
 
 - (void)fd_pushViewController:(UIViewController *)viewController animated:(BOOL)animated
@@ -148,7 +172,9 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
     [self fd_setupViewControllerBasedNavigationBarAppearanceIfNeeded:viewController];
     
     // Forward to primary implementation.
-    [self fd_pushViewController:viewController animated:animated];
+    if (![self.viewControllers containsObject:viewController]) {
+        [self fd_pushViewController:viewController animated:animated];
+    }
 }
 
 - (void)fd_setupViewControllerBasedNavigationBarAppearanceIfNeeded:(UIViewController *)appearingViewController
@@ -239,6 +265,22 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 - (void)setFd_prefersNavigationBarHidden:(BOOL)hidden
 {
     objc_setAssociatedObject(self, @selector(fd_prefersNavigationBarHidden), @(hidden), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+
+- (CGFloat)fd_interactivePopMaxAllowedInitialDistanceToLeftEdge
+{
+#if CGFLOAT_IS_DOUBLE
+    return [objc_getAssociatedObject(self, _cmd) doubleValue];
+#else
+    return [objc_getAssociatedObject(self, _cmd) floatValue];
+#endif
+}
+
+- (void)setFd_interactivePopMaxAllowedInitialDistanceToLeftEdge:(CGFloat)distance
+{
+    SEL key = @selector(fd_interactivePopMaxAllowedInitialDistanceToLeftEdge);
+    objc_setAssociatedObject(self, key, @(MAX(0, distance)), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end

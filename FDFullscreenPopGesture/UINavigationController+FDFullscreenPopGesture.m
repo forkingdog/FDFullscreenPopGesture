@@ -58,7 +58,7 @@
     
     // Prevent calling the handler when the gesture begins in an opposite direction.
     CGPoint translation = [gestureRecognizer translationInView:gestureRecognizer.view];
-    if (translation.x <= 0) {
+    if (translation.x < 0) {
         return NO;
     }
     

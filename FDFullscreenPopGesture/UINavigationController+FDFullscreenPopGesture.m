@@ -65,6 +65,35 @@
     return YES;
 }
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if ([otherGestureRecognizer isKindOfClass:NSClassFromString(@"UIScrollViewPanGestureRecognizer")]) {
+        return [self gestureRecognizer:gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:otherGestureRecognizer];
+    }
+    return NO;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if ([otherGestureRecognizer isKindOfClass:NSClassFromString(@"UIScrollViewPanGestureRecognizer")]) {
+        UIScrollView *scrollView = (UIScrollView *)otherGestureRecognizer.view;
+        if (![scrollView isKindOfClass:[UIScrollView class]]) {
+            return NO;
+        }
+        if (!scrollView.scrollEnabled) {
+            return NO;
+        }
+        CGPoint locationInScrollView = [otherGestureRecognizer locationInView:scrollView];
+        CGPoint locationInLayoutContainer = [gestureRecognizer.view convertPoint:locationInScrollView fromView:scrollView];
+        UIViewController *topViewController = self.navigationController.viewControllers.lastObject;
+        if (topViewController.fd_interactivePopMaxAllowedInitialDistanceToLeftEdge > 0) {
+            return locationInLayoutContainer.x < MIN(100,topViewController.fd_interactivePopMaxAllowedInitialDistanceToLeftEdge);
+        }
+        return locationInLayoutContainer.x < 100;
+    }
+    return NO;
+}
+
 @end
 
 typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewController, BOOL animated);

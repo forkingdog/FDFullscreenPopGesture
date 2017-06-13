@@ -67,6 +67,14 @@
     return YES;
 }
 
+//return YES to allow both to recognize simultaneously.
+//the default implementation returns NO (by default no two gestures can be recognized simultaneously)
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
+    
+    return YES;
+}
+
+
 @end
 
 typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewController, BOOL animated);

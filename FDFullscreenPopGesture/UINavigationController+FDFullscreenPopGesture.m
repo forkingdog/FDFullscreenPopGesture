@@ -26,13 +26,20 @@
 @interface _FDFullscreenPopGestureRecognizerDelegate : NSObject <UIGestureRecognizerDelegate>
 
 @property (nonatomic, weak) UINavigationController *navigationController;
-
+@property (nonatomic, weak) id<UIGestureRecognizerDelegate> delegate;
 @end
 
 @implementation _FDFullscreenPopGestureRecognizerDelegate
 
 - (BOOL)gestureRecognizerShouldBegin:(UIPanGestureRecognizer *)gestureRecognizer
 {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(gestureRecognizerShouldBegin:)]) {
+        BOOL shouldBegin = [self.delegate gestureRecognizerShouldBegin:gestureRecognizer];
+        if (shouldBegin == NO) {
+            return shouldBegin;
+        }
+    }
+    
     // Ignore when no view controller is pushed into the navigation stack.
     if (self.navigationController.viewControllers.count <= 1) {
         return NO;
@@ -62,6 +69,46 @@
     CGFloat multiplier = isLeftToRight ? 1 : - 1;
     if ((translation.x * multiplier) <= 0) {
         return NO;
+    }
+    
+    return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if (self.delegate &&
+        [self.delegate respondsToSelector:@selector(gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:)]) {
+        return [self.delegate gestureRecognizer:gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:otherGestureRecognizer];
+    }
+    
+    return NO;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if (self.delegate &&
+        [self.delegate respondsToSelector:@selector(gestureRecognizer:shouldRequireFailureOfGestureRecognizer:)]) {
+        return [self.delegate gestureRecognizer:gestureRecognizer shouldRequireFailureOfGestureRecognizer:otherGestureRecognizer];
+    }
+    
+    return NO;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if (self.delegate &&
+        [self.delegate respondsToSelector:@selector(gestureRecognizer:shouldBeRequiredToFailByGestureRecognizer:)]) {
+        return [self.delegate gestureRecognizer:gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:otherGestureRecognizer];
+    }
+    
+    return NO;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    if (self.delegate &&
+        [self.delegate respondsToSelector:@selector(gestureRecognizer:shouldReceiveTouch:)]) {
+        return [self.delegate gestureRecognizer:gestureRecognizer shouldReceiveTouch:touch];
     }
     
     return YES;
@@ -243,6 +290,16 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 {
     SEL key = @selector(fd_viewControllerBasedNavigationBarAppearanceEnabled);
     objc_setAssociatedObject(self, key, @(enabled), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (id<UIGestureRecognizerDelegate>)fd_fullscreenPopGestureRecognizerDelegate
+{
+    return self.fd_popGestureRecognizerDelegate.delegate;
+}
+
+- (void)setFd_fullscreenPopGestureRecognizerDelegate:(id<UIGestureRecognizerDelegate>)fd_fullscreenPopGestureRecognizerDelegate
+{
+    self.fd_popGestureRecognizerDelegate.delegate = fd_fullscreenPopGestureRecognizerDelegate;
 }
 
 @end

@@ -33,7 +33,8 @@
 
 /// The gesture recognizer that actually handles interactive pop.
 @property (nonatomic, strong, readonly) UIPanGestureRecognizer *fd_fullscreenPopGestureRecognizer;
-
+/// Don't set gestureRecognizer delegate directly. Use this property instead.
+@property (nonatomic, weak) id<UIGestureRecognizerDelegate> fd_fullscreenPopGestureRecognizerDelegate;
 /// A view controller is able to control navigation bar's appearance by itself,
 /// rather than a global way, checking "fd_prefersNavigationBarHidden" property.
 /// Default to YES, disable it if you don't want so.

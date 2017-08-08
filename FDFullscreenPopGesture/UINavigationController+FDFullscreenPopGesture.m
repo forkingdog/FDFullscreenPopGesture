@@ -67,6 +67,27 @@
     return YES;
 }
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if (gestureRecognizer == self.navigationController.fd_fullscreenPopGestureRecognizer)
+    {
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if (gestureRecognizer == self.navigationController.fd_fullscreenPopGestureRecognizer ||
+        otherGestureRecognizer == self.navigationController.fd_fullscreenPopGestureRecognizer)
+    {
+        return YES;
+    }
+    return NO;
+}
+
 @end
 
 typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewController, BOOL animated);

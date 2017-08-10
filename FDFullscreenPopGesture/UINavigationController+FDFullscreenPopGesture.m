@@ -67,6 +67,37 @@
     return YES;
 }
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if (gestureRecognizer == self.navigationController.fd_fullscreenPopGestureRecognizer)
+    {
+        // Ignore when the beginning location is beyond max allowed initial distance to left edge.
+        UIViewController *topViewController = self.navigationController.viewControllers.lastObject;
+        CGFloat maxAllowedInitialDistance = topViewController.fd_interactivePopMaxAllowedInitialDistanceToLeftEdge;
+        
+        CGPoint beginningLocation = [gestureRecognizer locationInView:gestureRecognizer.view];
+        
+        if (maxAllowedInitialDistance > 0 && beginningLocation.x > maxAllowedInitialDistance) {
+            return NO;
+        }
+        
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if (gestureRecognizer == self.navigationController.fd_fullscreenPopGestureRecognizer ||
+        otherGestureRecognizer == self.navigationController.fd_fullscreenPopGestureRecognizer)
+    {
+        return YES;
+    }
+    return NO;
+}
+
 @end
 
 typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewController, BOOL animated);
@@ -108,12 +139,14 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
     // Forward to primary implementation.
     [self fd_viewWillDisappear:animated];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        UIViewController *viewController = self.navigationController.viewControllers.lastObject;
-        if (viewController && !viewController.fd_prefersNavigationBarHidden) {
-            [self.navigationController setNavigationBarHidden:NO animated:NO];
-        }
-    });
+    if (self.navigationController.fd_viewControllerBasedNavigationBarAppearanceEnabled) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            UIViewController *viewController = self.navigationController.viewControllers.lastObject;
+            if (viewController && !viewController.fd_prefersNavigationBarHidden) {
+                [self.navigationController setNavigationBarHidden:NO animated:NO];
+            }
+        });
+    }
 }
 
 - (_FDViewControllerWillAppearInjectBlock)fd_willAppearInjectBlock
@@ -235,8 +268,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
     if (number) {
         return number.boolValue;
     }
-    self.fd_viewControllerBasedNavigationBarAppearanceEnabled = YES;
-    return YES;
+    return NO;
 }
 
 - (void)setFd_viewControllerBasedNavigationBarAppearanceEnabled:(BOOL)enabled

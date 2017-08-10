@@ -72,6 +72,16 @@ shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRec
 {
     if (gestureRecognizer == self.navigationController.fd_fullscreenPopGestureRecognizer)
     {
+        // Ignore when the beginning location is beyond max allowed initial distance to left edge.
+        UIViewController *topViewController = self.navigationController.viewControllers.lastObject;
+        CGFloat maxAllowedInitialDistance = topViewController.fd_interactivePopMaxAllowedInitialDistanceToLeftEdge;
+        
+        CGPoint beginningLocation = [gestureRecognizer locationInView:gestureRecognizer.view];
+        
+        if (maxAllowedInitialDistance > 0 && beginningLocation.x > maxAllowedInitialDistance) {
+            return NO;
+        }
+        
         return YES;
     }
     return NO;

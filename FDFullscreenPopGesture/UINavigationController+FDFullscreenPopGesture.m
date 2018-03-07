@@ -67,6 +67,25 @@
     return YES;
 }
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if ([otherGestureRecognizer.view isKindOfClass:[UIScrollView class]]) {
+        UIScrollView *scrollView = otherGestureRecognizer.view;
+        if (@available(iOS 11.0, *)) {
+            if (scrollView.contentOffset.x == -scrollView.adjustedContentInset.left) {
+                return YES;
+            }
+        } else {
+            if (scrollView.contentOffset.x == -scrollView.contentInset.left) {
+                return YES;
+            }
+        }
+    }
+    if ([otherGestureRecognizer.view isKindOfClass:NSClassFromString(@"WKContentView")]) {
+        return YES;
+    }
+    return NO;
+}
+
 @end
 
 typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewController, BOOL animated);

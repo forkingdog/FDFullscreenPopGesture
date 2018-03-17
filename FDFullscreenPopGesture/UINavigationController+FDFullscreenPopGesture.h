@@ -59,4 +59,6 @@
 /// gesture. 0 by default, which means it will ignore this limit.
 @property (nonatomic, assign) CGFloat fd_interactivePopMaxAllowedInitialDistanceToLeftEdge;
 
+@property (assign, nonatomic) BOOL fd_shouldSimultaneouslyRecognizeFullScreenPopGesture;
+
 @end

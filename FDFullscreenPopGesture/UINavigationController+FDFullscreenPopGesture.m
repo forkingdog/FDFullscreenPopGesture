@@ -67,6 +67,14 @@
     return YES;
 }
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    UIViewController *controller = self.navigationController.viewControllers.lastObject;
+    if (controller && controller.fd_shouldSimultaneouslyRecognizeFullScreenPopGesture) {
+        return controller.fd_shouldSimultaneouslyRecognizeFullScreenPopGesture;
+    }
+    return NO;
+}
+
 @end
 
 typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewController, BOOL animated);
@@ -283,6 +291,14 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 {
     SEL key = @selector(fd_interactivePopMaxAllowedInitialDistanceToLeftEdge);
     objc_setAssociatedObject(self, key, @(MAX(0, distance)), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (void)setFd_shouldSimultaneouslyRecognizeFullScreenPopGesture:(BOOL)fd_shouldSimultaneouslyRecognizeFullScreenPopGesture {
+    objc_setAssociatedObject(self, @selector(fd_shouldSimultaneouslyRecognizeFullScreenPopGesture), @(fd_shouldSimultaneouslyRecognizeFullScreenPopGesture), OBJC_ASSOCIATION_ASSIGN);
+}
+
+- (BOOL)fd_shouldSimultaneouslyRecognizeFullScreenPopGesture {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
 }
 
 @end

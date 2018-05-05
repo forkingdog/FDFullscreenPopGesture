@@ -128,6 +128,16 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 
 @end
 
+static inline void class_swizzleSelector(Class class, SEL originalSelector, SEL newSelector) {
+    Method originMethod = class_getInstanceMethod(class, originalSelector);
+    Method newMethod = class_getInstanceMethod(class, newSelector);
+    if (class_addMethod(class, originalSelector, method_getImplementation(newMethod), method_getTypeEncoding(newMethod))) {
+        class_replaceMethod(class, newSelector, method_getImplementation(originMethod), method_getTypeEncoding(originMethod));
+    } else {
+        method_exchangeImplementations(originMethod, newMethod);
+    }
+}
+
 @implementation UINavigationController (FDFullscreenPopGesture)
 
 + (void)load
@@ -136,19 +146,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         Class class = [self class];
-        
-        SEL originalSelector = @selector(pushViewController:animated:);
-        SEL swizzledSelector = @selector(fd_pushViewController:animated:);
-        
-        Method originalMethod = class_getInstanceMethod(class, originalSelector);
-        Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
-        
-        BOOL success = class_addMethod(class, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));
-        if (success) {
-            class_replaceMethod(class, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
-        } else {
-            method_exchangeImplementations(originalMethod, swizzledMethod);
-        }
+        class_swizzleSelector(class, @selector(pushViewController:animated:), @selector(fd_pushViewController:animated:));
     });
 }
 
@@ -247,7 +245,60 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 
 @end
 
+void fd_handleNavigationTransition(UIPercentDrivenInteractiveTransition *self, SEL _cmd, UIPanGestureRecognizer *arg)
+{
+    if ([arg isKindOfClass:[UIPanGestureRecognizer class]]) {
+        CGPoint touchPoint = [arg translationInView:arg.view];
+        CGFloat percent = touchPoint.x/CGRectGetWidth(arg.view.frame);
+        UINavigationController *nav = [arg.view.nextResponder isKindOfClass:[UINavigationController class]] ? (UINavigationController *)arg.view.nextResponder : nil;
+        switch (arg.state) {
+            case UIGestureRecognizerStateBegan: {
+                nav.fd_interactivePopTransitionCompletionDistance = 0.5 * CGRectGetWidth(arg.view.frame);
+                BOOL responderCompletionDistance = [nav.viewControllers.lastObject respondsToSelector:@selector(fd_interactivePopTransitionCompletionDistance)];
+                if (responderCompletionDistance) {
+                    UIViewController *vc = nav.viewControllers.lastObject;
+                    nav.fd_interactivePopTransitionCompletionDistance = vc.fd_interactivePopTransitionCompletionDistance;
+                }
+                NSArray *startInteractiveTransitionKeys = @[@"start", @"Interactive", @"Transition"];
+                NSString *startInteractiveTransitionName = [startInteractiveTransitionKeys componentsJoinedByString:@""];
+                [self performSelector:NSSelectorFromString(startInteractiveTransitionName)]; // viewControllers.count - 1
+            }
+                break;
+            case UIGestureRecognizerStateChanged: {
+                [self updateInteractiveTransition:percent];
+            }
+                break;
+            case UIGestureRecognizerStateFailed:
+            case UIGestureRecognizerStateEnded:
+            case UIGestureRecognizerStateCancelled:
+            default:
+                [self setCompletionSpeed:1];
+                if (percent < nav.fd_interactivePopTransitionCompletionDistance/CGRectGetWidth(arg.view.frame)) {
+                    [self cancelInteractiveTransition];
+                } else {
+                    [self finishInteractiveTransition];
+                }
+                break;
+        }
+    }
+}
+
 @implementation UIViewController (FDFullscreenPopGesture)
+
++ (void)load
+{
+    // Inject "-handleNavigationTransition_swizzle:" for class "_UINavigationInteractiveTransition"
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSString *className = @"_UINavigationInteractiveTransition";
+        NSString *originSelectorName = @"handleNavigationTransition:";
+        NSString *newSelectorName = @"fd_handleNavigationTransition:";
+        Class class = NSClassFromString(className);
+        if (class_addMethod(class, NSSelectorFromString(newSelectorName), (IMP)fd_handleNavigationTransition, "v@:@")) {
+            class_swizzleSelector(class, NSSelectorFromString(originSelectorName), NSSelectorFromString(newSelectorName));
+        }
+    });
+}
 
 - (BOOL)fd_interactivePopDisabled
 {
@@ -269,7 +320,6 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
     objc_setAssociatedObject(self, @selector(fd_prefersNavigationBarHidden), @(hidden), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-
 - (CGFloat)fd_interactivePopMaxAllowedInitialDistanceToLeftEdge
 {
 #if CGFLOAT_IS_DOUBLE
@@ -282,6 +332,24 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 - (void)setFd_interactivePopMaxAllowedInitialDistanceToLeftEdge:(CGFloat)distance
 {
     SEL key = @selector(fd_interactivePopMaxAllowedInitialDistanceToLeftEdge);
+    objc_setAssociatedObject(self, key, @(MAX(0, distance)), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (CGFloat)fd_interactivePopTransitionCompletionDistance
+{
+    if (!objc_getAssociatedObject(self, _cmd)) {
+        return 0.5 * CGRectGetWidth(self.navigationController.fd_fullscreenPopGestureRecognizer.view.frame);
+    }
+#if CGFLOAT_IS_DOUBLE
+    return [objc_getAssociatedObject(self, _cmd) doubleValue];
+#else
+    return [objc_getAssociatedObject(self, _cmd) floatValue];
+#endif
+}
+
+- (void)setFd_interactivePopTransitionCompletionDistance:(CGFloat)distance
+{
+    SEL key = @selector(fd_interactivePopTransitionCompletionDistance);
     objc_setAssociatedObject(self, key, @(MAX(0, distance)), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 

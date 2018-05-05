@@ -261,7 +261,10 @@ void fd_handleNavigationTransition(UIPercentDrivenInteractiveTransition *self, S
                 }
                 NSArray *startInteractiveTransitionKeys = @[@"start", @"Interactive", @"Transition"];
                 NSString *startInteractiveTransitionName = [startInteractiveTransitionKeys componentsJoinedByString:@""];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
                 [self performSelector:NSSelectorFromString(startInteractiveTransitionName)]; // viewControllers.count - 1
+#pragma clang diagnostic pop
             }
                 break;
             case UIGestureRecognizerStateChanged: {

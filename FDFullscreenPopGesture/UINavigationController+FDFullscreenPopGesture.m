@@ -263,7 +263,10 @@ void fd_handleNavigationTransition(UIPercentDrivenInteractiveTransition *self, S
                 NSString *startInteractiveTransitionName = [startInteractiveTransitionKeys componentsJoinedByString:@""];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-                [self performSelector:NSSelectorFromString(startInteractiveTransitionName)]; // viewControllers.count - 1
+                SEL selector = NSSelectorFromString(startInteractiveTransitionName);
+                if ([self respondsToSelector:selector]) {
+                    [self performSelector:selector]; // viewControllers.count - 1
+                }
 #pragma clang diagnostic pop
             }
                 break;
@@ -293,8 +296,8 @@ void fd_handleNavigationTransition(UIPercentDrivenInteractiveTransition *self, S
     // Inject "-handleNavigationTransition_swizzle:" for class "_UINavigationInteractiveTransition"
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSString *className = @"_UINavigationInteractiveTransition";
-        NSString *originSelectorName = @"handleNavigationTransition:";
+        NSString *className = [@[@"_", @"UINavigation", @"Interactive", @"Transition"] componentsJoinedByString:@""];
+        NSString *originSelectorName = [@[@"handle", @"Navigation", @"Transition:"] componentsJoinedByString:@""];
         NSString *newSelectorName = @"fd_handleNavigationTransition:";
         Class class = NSClassFromString(className);
         if (class_addMethod(class, NSSelectorFromString(newSelectorName), (IMP)fd_handleNavigationTransition, "v@:@")) {

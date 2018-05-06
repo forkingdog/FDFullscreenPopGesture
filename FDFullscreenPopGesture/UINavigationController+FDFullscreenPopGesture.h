@@ -59,4 +59,8 @@
 /// gesture. 0 by default, which means it will ignore this limit.
 @property (nonatomic, assign) CGFloat fd_interactivePopMaxAllowedInitialDistanceToLeftEdge;
 
+/// Interactive transition finished distance
+/// Default is 50% of the view's width, the view in whose coordinate system the translation of the pan gesture should be computed.
+@property (nonatomic, assign) CGFloat fd_interactivePopTransitionCompletionDistance;
+
 @end

@@ -14,6 +14,7 @@
 		4894F42B1B183DE3009F44D9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4894F42A1B183DE3009F44D9 /* Images.xcassets */; };
 		4894F42E1B183DE3009F44D9 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4894F42C1B183DE3009F44D9 /* LaunchScreen.xib */; };
 		4894F4461B183E99009F44D9 /* UINavigationController+FDFullscreenPopGesture.m in Sources */ = {isa = PBXBuildFile; fileRef = 4894F4441B183E99009F44D9 /* UINavigationController+FDFullscreenPopGesture.m */; };
+		68511843209DC09900A1D35F /* FDDemoCompletionDistanceVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 68511842209DC09900A1D35F /* FDDemoCompletionDistanceVC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,8 @@
 		4894F42D1B183DE3009F44D9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		4894F4441B183E99009F44D9 /* UINavigationController+FDFullscreenPopGesture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+FDFullscreenPopGesture.m"; sourceTree = "<group>"; };
 		4894F4451B183E99009F44D9 /* UINavigationController+FDFullscreenPopGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+FDFullscreenPopGesture.h"; sourceTree = "<group>"; };
+		68511841209DC09900A1D35F /* FDDemoCompletionDistanceVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FDDemoCompletionDistanceVC.h; sourceTree = "<group>"; };
+		68511842209DC09900A1D35F /* FDDemoCompletionDistanceVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FDDemoCompletionDistanceVC.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +67,8 @@
 				4894F4431B183DEF009F44D9 /* FDFullscreenPopGesture */,
 				4894F4211B183DE3009F44D9 /* AppDelegate.h */,
 				4894F4221B183DE3009F44D9 /* AppDelegate.m */,
+				68511841209DC09900A1D35F /* FDDemoCompletionDistanceVC.h */,
+				68511842209DC09900A1D35F /* FDDemoCompletionDistanceVC.m */,
 				140C9FF51DAF688C008260D6 /* FDDemoScrollView.h */,
 				140C9FF61DAF688C008260D6 /* FDDemoScrollView.m */,
 				4894F4271B183DE3009F44D9 /* Main.storyboard */,
@@ -164,6 +169,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				68511843209DC09900A1D35F /* FDDemoCompletionDistanceVC.m in Sources */,
 				4894F4231B183DE3009F44D9 /* AppDelegate.m in Sources */,
 				4894F4461B183E99009F44D9 /* UINavigationController+FDFullscreenPopGesture.m in Sources */,
 				140C9FF71DAF688C008260D6 /* FDDemoScrollView.m in Sources */,

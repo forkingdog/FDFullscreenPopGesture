@@ -242,7 +242,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 - (void)setFd_viewControllerBasedNavigationBarAppearanceEnabled:(BOOL)enabled
 {
     SEL key = @selector(fd_viewControllerBasedNavigationBarAppearanceEnabled);
-    objc_setAssociatedObject(self, key, @(enabled), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, key, @(enabled), OBJC_ASSOCIATION_ASSIGN);
 }
 
 @end
@@ -256,7 +256,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 
 - (void)setFd_interactivePopDisabled:(BOOL)disabled
 {
-    objc_setAssociatedObject(self, @selector(fd_interactivePopDisabled), @(disabled), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(fd_interactivePopDisabled), @(disabled), OBJC_ASSOCIATION_ASSIGN);
 }
 
 - (BOOL)fd_prefersNavigationBarHidden
@@ -266,7 +266,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 
 - (void)setFd_prefersNavigationBarHidden:(BOOL)hidden
 {
-    objc_setAssociatedObject(self, @selector(fd_prefersNavigationBarHidden), @(hidden), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(fd_prefersNavigationBarHidden), @(hidden), OBJC_ASSOCIATION_ASSIGN);
 }
 
 
@@ -282,7 +282,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 - (void)setFd_interactivePopMaxAllowedInitialDistanceToLeftEdge:(CGFloat)distance
 {
     SEL key = @selector(fd_interactivePopMaxAllowedInitialDistanceToLeftEdge);
-    objc_setAssociatedObject(self, key, @(MAX(0, distance)), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, key, @(MAX(0, distance)), OBJC_ASSOCIATION_ASSIGN);
 }
 
 @end

@@ -68,6 +68,13 @@ Use CocoaPods
 ``` ruby
 pod 'FDFullscreenPopGesture', '1.1'
 ```
+
+Use Carthage
+
+``` ruby
+github "janlionly/FDFullscreenPopGesture"
+```
+
 # Release Notes
 
 **1.1** - View controller based navigation bar appearance and transition.  

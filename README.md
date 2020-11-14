@@ -68,6 +68,20 @@ Use CocoaPods
 ``` ruby
 pod 'FDFullscreenPopGesture', '1.1'
 ```
+
+Use Carthage
+
+``` ruby
+github "janlionly/FDFullscreenPopGesture"
+```
+
+Swift Package Manager
+- iOS: Open Xcode, File->Swift Packages, search input **https://github.com/janlionly/FDFullscreenPopGesture.git**, and then select branch **master**.
+- Or add dependencies in your `Package.swift`:
+``` ruby
+.package(url: "https://github.com/janlionly/FDFullscreenPopGesture.git", .branch("master")),
+```
+
 # Release Notes
 
 **1.1** - View controller based navigation bar appearance and transition.  

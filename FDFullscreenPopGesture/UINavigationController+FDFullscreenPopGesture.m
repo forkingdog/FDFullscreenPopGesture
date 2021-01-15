@@ -110,7 +110,9 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         UIViewController *viewController = self.navigationController.viewControllers.lastObject;
-        if (viewController && !viewController.fd_prefersNavigationBarHidden) {
+        if (viewController &&
+            viewController.fd_prefersNavigationBarHiddenObject &&
+            !viewController.fd_prefersNavigationBarHidden) {
             [self.navigationController setNavigationBarHidden:NO animated:NO];
         }
     });
@@ -124,6 +126,10 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 - (void)setFd_willAppearInjectBlock:(_FDViewControllerWillAppearInjectBlock)block
 {
     objc_setAssociatedObject(self, @selector(fd_willAppearInjectBlock), block, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (NSNumber *)fd_prefersNavigationBarHiddenObject {
+    return objc_getAssociatedObject(self, _cmd);
 }
 
 @end
@@ -188,7 +194,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
     __weak typeof(self) weakSelf = self;
     _FDViewControllerWillAppearInjectBlock block = ^(UIViewController *viewController, BOOL animated) {
         __strong typeof(weakSelf) strongSelf = weakSelf;
-        if (strongSelf) {
+        if (strongSelf && viewController.fd_prefersNavigationBarHiddenObject) {
             [strongSelf setNavigationBarHidden:viewController.fd_prefersNavigationBarHidden animated:animated];
         }
     };
@@ -261,7 +267,7 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
 
 - (BOOL)fd_prefersNavigationBarHidden
 {
-    return [objc_getAssociatedObject(self, _cmd) boolValue];
+    return [self.fd_prefersNavigationBarHiddenObject boolValue];
 }
 
 - (void)setFd_prefersNavigationBarHidden:(BOOL)hidden
